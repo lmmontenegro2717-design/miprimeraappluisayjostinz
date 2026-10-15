@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Bosque Mágico - Juegos Didácticos (1-5 años)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            user-select: none;
+        }
+
+       body {
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 60%, #B5EAD7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- ELEMENTOS DE FONDO TEMÁTICO --- */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50px;
+            opacity: 0.9;
+            animation: moveClouds linear infinite;
+            z-index: 1;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+        }
+
+        .cloud1 { width: 120px; height: 40px; top: 40px; left: -150px; animation-duration: 25s; }
+        .cloud1::before { width: 50px; height: 50px; top: -20px; left: 20px; }
+        .cloud1::after { width: 40px; height: 40px; top: -15px; left: 55px; }
+
+        .cloud2 { width: 160px; height: 50px; top: 120px; left: -200px; animation-duration: 35s; animation-delay: 5s; }
+        .cloud2::before { width: 70px; height: 70px; top: -30px; left: 25px; }
+        .cloud2::after { width: 50px; height: 50px; top: -20px; left: 80px; }
+
+        @keyframes moveClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(120vw); }
+        }
+
+        /* --- ENCABEZADO Y MASCOTA --- */
+        header {
+            text-align: center;
+            padding: 25px 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-title {
+            font-size: 3rem;
+            color: #FF5964;
+            text-shadow: 3px 3px 0px #FFF, 6px 6px 0px #FFE5D9;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite alternate;
+        }
+
+        .mascot-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .mascot {
+            font-size: 4rem;
+            animation: bounce 1.5s infinite ease-in-out;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.15));
+        }
+
+        .speech-bubble {
+            background: #FFF;
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: 3px solid #35A7FF;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2E4057;
+            position: relative;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 15px 10px 0;
+            border-style: solid;
+            border-color: transparent #35A7FF transparent transparent;
+        }
+
+        /* --- MAPA DE JUEGOS --- */
+        .game-map {
+            max-width: 1100px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .island-card {
+            background: linear-gradient(145deg, #FFFFFF, #FFF9EC);
+            border-radius: 35px;
+            width: 300px;
+            padding: 25px;
+            text-align: center;
+            border: 6px solid #FFD166;
+            box-shadow: 0 12px 0px #E5B23A, 0 15px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .island-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            box-shadow: 0 18px 0px #E5B23A, 0 20px 30px rgba(0,0,0,0.2);
+        }
+
+        .island-icon {
+            font-size: 4.5rem;
+            margin-bottom: 10px;
+            display: inline-block;
+            animation: wiggle 3s infinite;
+        }
+
+        .island-card h2 {
+            font-size: 1.8rem;
+            color: #35A7FF;
+            margin-bottom: 8px;
+        }
+
+        .island-card p {
+            font-size: 1rem;
+            color: #5C6B73;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .btn-play {
+            background: #06D6A0;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 50px;
+            box-shadow: 0 6px 0px #049A73, 0 8px 15px rgba(0,0,0,0.15);
+            transition: all 0.1s;
+        }
+
+        .btn-play:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #049A73, 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* --- VENTANA MODAL DE JUEGO --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #FFF;
+            width: 90%;
+            max-width: 650px;
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            border: 8px solid #FF6B6B;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: #FF5252;
+            color: white;
+            border: 4px solid white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        /* ESTILOS DE JUEGOS */
+        #balloon-canvas {
+            height: 320px;
+            background: linear-gradient(180deg, #E0F7FA 0%, #FFF 100%);
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            border: 4px dashed #4DD0E1;
+        }
+
+        .balloon {
+            width: 65px;
+            height: 80px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            position: absolute;
+            bottom: -90px;
+            cursor: pointer;
+            animation: floatUp 4s linear infinite;
+        }
+
+        .color-box {
+            width: 160px;
+            height: 160px;
+            border-radius: 30px;
+            margin: 15px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border: 6px solid #FFF;
+        }
+
+        .color-btn {
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 0px rgba(0,0,0,0.2);
+        }
+
+        .animal-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .animal-card {
+            background: #FFF9C4;
+            border: 4px solid #FBC02D;
+            border-radius: 25px;
+            width: 110px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .animal-card:hover { transform: scale(1.1) rotate(3deg); }
+
+        /* ANIMACIONES */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.04); } }
+        @keyframes wiggle { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
+        @keyframes popUp { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes floatUp { 0% { bottom: -90px; } 100% { bottom: 350px; } }
+    </style>
+</head>
+<body>
+
+    <!-- Nubes de fondo -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+    <header>
+        <h1 class="logo-title">🌲 El Bosque Mágico 🌲</h1>
+        <div class="mascot-container" onclick="speak('¡Hola amiguito! Elige un juego para empezar a aprender')">
+            <div class="mascot">🦉</div>
+            <div class="speech-bubble" id="mascot-text">¡Haz clic en una isla para jugar! 🚀</div>
+        </div>
+    </header>
+
+    <!-- Mapa de Islas/Juegos -->
+    <main class="game-map">
+        <div class="island-card" onclick="openGame('balloonModal'); startBalloons();">
+            <div class="island-icon">🎈</div>
+            <h2>Isla de Globos</h2>
+            <p>¡Explota los globos brillantes antes de que vuelen al cielo!</p>
+            <button class="btn-play">¡Jugar!</button>
+        </div>
+
+        <div class="island-card" onclick="openGame('colorModal'); nextColor();">
+            <div class="island-icon">🎨</div>
+            <h2>Valle de Colores</h2>
+            <p>Aprende los nombres de los colores jugando con las pinturas.</p>
+            <button class="btn-play">¡Jugar!</button>
+        </div>
+
+        <div class="island-card" onclick="openGame('animalModal')">
+            <div class="island-icon">🐶</div>
+            <h2>Granja Cantarina</h2>
+            <p>Descubre qué sonido hace cada animal de la granja.</p>
+            <button class="btn-play">¡Jugar!</button>
+        </div>
+    </main>
+
+    <!-- MODAL 1: GLOBOS -->
+    <div id="balloonModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeGame('balloonModal')">✕</button>
+            <h2 style="color: #FF5252; font-size: 2rem;">🎈 Isla de Globos</h2>
+            <p style="font-size: 1.3rem; margin: 10px 0;">Globos atrapados: <span id="score" style="color: #FF5252; font-weight: bold;">0</span></p>
+            <div id="balloon-canvas"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: COLORES -->
+    <div id="colorModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeGame('colorModal')">✕</button>
+            <h2 style="color: #35A7FF; font-size: 2rem;">🎨 Valle de Colores</h2>
+            <div id="colorDisplayBox" class="color-box"></div>
+            <p id="colorFeedback" style="font-size: 1.4rem; color: #2E4057; font-weight: bold; margin: 15px 0;">¿Qué color es este?</p>
+            <div id="colorOptionsContainer" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ANIMALES -->
+    <div id="animalModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeGame('animalModal')">✕</button>
+            <h2 style="color: #FBC02D; font-size: 2rem;">🐶 Granja Cantarina</h2>
+            <p style="font-size: 1.2rem; margin-top: 5px;">Toca un amigo para escucharlo:</p>
+            <div class="animal-grid">
+                <div class="animal-card" onclick="playAnimal('Perro', '¡Guau guau!')">
+                    <span style="font-size: 3.5rem;">🐶</span>
+                    <strong style="color: #D32F2F;">Perro</strong>
+                </div>
+                <div class="animal-card" onclick="playAnimal('Gato', '¡Miau miau!')">
+                    <span style="font-size: 3.5rem;">🐱</span>
+                    <strong style="color: #D32F2F;">Gato</strong>
+                </div>
+                <div class="animal-card" onclick="playAnimal('Vaca', '¡Muuu!')">
+                    <span style="font-size: 3.5rem;">🐮</span>
+                    <strong style="color: #D32F2F;">Vaca</strong>
+                </div>
+                <div class="animal-card" onclick="playAnimal('Pato', '¡Cuac cuac!')">
+                    <span style="font-size: 3.5rem;">🦆</span>
+                    <strong style="color: #D32F2F;">Pato</strong>
+                </div>
+            </div>
+            <div id="animal-msg" style="margin-top: 20px; font-size: 1.4rem; color: #388E3C; font-weight: bold;">¡Elige un animalito!</div>
+        </div>
+    </div>
+
+    <script>
+        // Voz y efectos
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'es-ES';
+                msg.rate = 0.95;
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        function openGame(id) {
+            document.getElementById(id).style.display = 'flex';
+            speak("¡A jugar!");
+        }
+
+        function closeGame(id) {
+            document.getElementById(id).style.display = 'none';
+            if(id === 'balloonModal') {
+                clearInterval(balloonTimer);
+                document.getElementById('balloon-canvas').innerHTML = '';
+            }
+        }
+
+        // --- JUEGO 1: GLOBOS ---
+        let balloonTimer, score = 0;
+        function startBalloons() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            const canvas = document.getElementById('balloon-canvas');
+            canvas.innerHTML = '';
+            clearInterval(balloonTimer);
+            balloonTimer = setInterval(() => createBalloon(canvas), 700);
+        }
+
+        function createBalloon(canvas) {
+            const b = document.createElement('div');
+            b.className = 'balloon';
+            const colors = ['#FF5252', '#FFEB3B', '#4CAF50', '#2196F3', '#AB47BC'];
+            b.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            b.style.left = Math.random() * (canvas.clientWidth - 70) + 'px';
+            
+            b.onclick = function() {
+                score++;
+                document.getElementById('score').innerText = score;
+                speak("¡Pum!");
+                b.remove();
+            };
+            canvas.appendChild(b);
+            setTimeout(() => { if(b.parentElement) b.remove(); }, 4000);
+        }
+
+        // --- JUEGO 2: COLORES ---
+        const colors = [
+            { name: 'Rojo', hex: '#FF3B3B' },
+            { name: 'Azul', hex: '#0077FF' },
+            { name: 'Amarillo', hex: '#FFCC00' },
+            { name: 'Verde', hex: '#00CC44' }
+        ];
+        let currentCol = {};
+
+        function nextColor() {
+            currentCol = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById('colorDisplayBox').style.backgroundColor = currentCol.hex;
+            document.getElementById('colorFeedback').innerText = "¿Qué color es?";
+            
+            const container = document.getElementById('colorOptionsContainer');
+            container.innerHTML = '';
+            
+            colors.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'color-btn';
+                btn.style.backgroundColor = c.hex;
+                btn.innerText = c.name;
+                btn.onclick = () => {
+                    if(c.name === currentCol.name) {
+                        document.getElementById('colorFeedback').innerText = "🎉 ¡Muy bien!";
+                        speak("¡Correcto! Es el color " + c.name);
+                        setTimeout(nextColor, 1500);
+                    } else {
+                        document.getElementById('colorFeedback').innerText = "❌ Inténtalo otra vez";
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // --- JUEGO 3: ANIMALES ---
+        function playAnimal(name, sound) {
+            document.getElementById('animal-msg').innerText = `El ${name} hace ${sound}`;
+            speak(`El ${name} hace ${sound}`);
+        }
+    </script>
+</body>
+</html>
