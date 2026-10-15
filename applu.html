@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Bosque Mágico - Juegos Didácticos (1-5 años)</title>
+    <!-- Tailwind CSS CDN para un diseño responsivo y colorido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #B5EAD7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Nubes flotantes de fondo */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50px;
+            opacity: 0.9;
+            animation: moveClouds linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+        }
+
+        .cloud1 { width: 140px; height: 45px; top: 30px; left: -160px; animation-duration: 28s; }
+        .cloud1::before { width: 55px; height: 55px; top: -25px; left: 20px; }
+        .cloud1::after { width: 45px; height: 45px; top: -18px; left: 60px; }
+
+        .cloud2 { width: 180px; height: 55px; top: 120px; left: -220px; animation-duration: 38s; animation-delay: 4s; }
+        .cloud2::before { width: 75px; height: 75px; top: -35px; left: 30px; }
+        .cloud2::after { width: 55px; height: 55px; top: -22px; left: 90px; }
+
+        @keyframes moveClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(120vw); }
+        }
+
+        /* Animaciones para cartas e íconos */
+        @keyframes bounceSlow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes pulseTitle { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
+        @keyframes wiggleIcon { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+        @keyframes popIn { 0% { transform: scale(0.4); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes floatBalloon { 0% { transform: translateY(0); } 100% { transform: translateY(-420px); } }
+        @keyframes floatBubble { 0% { transform: translateY(0) scale(0.9); } 50% { transform: translateY(-180px) scale(1.1); } 100% { transform: translateY(-380px) scale(1); } }
+
+        .mascot-bounce { animation: bounceSlow 2s infinite ease-in-out; }
+        .title-pulse { animation: pulseTitle 2.5s infinite alternate ease-in-out; }
+        .wiggle { animation: wiggleIcon 3s infinite ease-in-out; }
+
+        /* Estilos de las tarjetas de juegos */
+        .island-card {
+            background: linear-gradient(145deg, #FFFFFF, #FFF9EC);
+            border: 6px solid #FFD166;
+            box-shadow: 0 12px 0px #E5B23A, 0 15px 25px rgba(0,0,0,0.12);
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .island-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 18px 0px #E5B23A, 0 22px 30px rgba(0,0,0,0.18);
+        }
+
+        .island-card:active {
+            transform: translateY(-2px) scale(0.99);
+            box-shadow: 0 6px 0px #E5B23A, 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        /* Estilo para modales de juegos */
+        .modal-body {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Animación de confeti */
+        .confetti-piece {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            top: -20px;
+            border-radius: 3px;
+            pointer-events: none;
+            animation: fallConfetti 2.5s linear forwards;
+        }
+
+        @keyframes fallConfetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Teclas del xilófono */
+        .xylo-key {
+            transition: transform 0.1s, filter 0.1s;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.15);
+        }
+        .xylo-key:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.15);
+        }
+
+        /* Globos interactivos */
+        .balloon-item {
+            position: absolute;
+            bottom: -100px;
+            cursor: pointer;
+            animation: floatBalloon 4.5s linear forwards;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+        }
+
+        /* Burbujas flotantes */
+        .bubble-item {
+            position: absolute;
+            bottom: -80px;
+            cursor: pointer;
+            animation: floatBubble 5s ease-in-out forwards;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(173,216,230,0.4));
+            border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.6);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between min-h-screen pb-6">
+
+    <!-- Nubes de fondo -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+    <!-- Encabezado con título e interacción de la mascota -->
+    <header class="w-full text-center pt-6 px-4 z-10 flex flex-col items-center">
+        <h1 class="logo-title text-4xl sm:text-6xl font-black text-rose-500 title-pulse drop-shadow-md tracking-wide">
+            🌲 El Bosque Mágico 🌲
+        </h1>
+        
+        <!-- Mascota Interactiva y Bocadillo de texto -->
+        <div class="flex items-center justify-center gap-3 mt-4 cursor-pointer group" onclick="speak('¡Hola amiguito! Explora el bosque mágico y colecciona estrellas')">
+            <div class="mascot-bounce text-6xl sm:text-7xl filter drop-shadow-lg group-hover:scale-110 transition-transform">
+                🦉
+            </div>
+            <div class="bg-white px-5 py-3 rounded-3xl border-4 border-sky-400 shadow-xl relative text-slate-700 font-bold text-base sm:text-xl">
+                <span id="mascot-speech">¡Toca una isla para jugar! 🚀</span>
+                <!-- Flecha del bocadillo -->
+                <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-r-[14px] border-r-sky-400 border-b-8 border-b-transparent"></div>
+            </div>
+        </div>
+
+        <!-- Indicador de Estrellas Ganadas -->
+        <div class="mt-4 bg-amber-300 border-4 border-amber-500 px-6 py-2 rounded-full font-extrabold text-amber-900 text-lg flex items-center gap-2 shadow-lg cursor-pointer hover:scale-105 transition-transform" onclick="openStickerAlbum()">
+            <span>⭐ Estrellas: <strong id="starCountDisplay" class="text-2xl text-rose-600">0</strong></span>
+            <span class="bg-white text-xs px-3 py-1 rounded-full text-slate-700 border border-amber-400">Ver Álbum 🎨</span>
+        </div>
+    </header>
+
+    <!-- Mapa de Islas / Rejilla de Juegos (6 Juegos) -->
+    <main class="w-full max-w-6xl px-4 my-6 z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+        
+        <!-- Juego 1: Globos -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('balloonModal'); startBalloonGame();">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">🎈</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Isla de Globos</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Explota los globos flotantes antes de que vuelen al cielo.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+        <!-- Juego 2: Colores -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('colorModal'); startColorGame();">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">🎨</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Valle de Colores</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Aprende y reconoce los colores jugando con las pinturas.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+        <!-- Juego 3: Granja Cantarina -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('animalModal');">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">🐶</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Granja Cantarina</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Escucha y aprende cómo hacen tus amigos de la granja.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+        <!-- Juego 4: Xilófono Mágico -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('xyloModal');">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">🎵</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Xilófono Mágico</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Crea melodías divertidas tocando las teclas de colores.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+        <!-- Juego 5: Cuentastrellas -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('countModal'); startCountGame();">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">⭐</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Cuentastrellas</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Cuenta cuántas estrellas mágicas brillan en el cielo.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+        <!-- Juego 6: Burbujas Mágicas -->
+        <div class="island-card w-full max-w-sm rounded-[35px] p-6 text-center cursor-pointer flex flex-col justify-between" onclick="openGame('bubbleModal'); startBubbleGame();">
+            <div>
+                <div class="text-6xl mb-2 wiggle inline-block">🫧</div>
+                <h2 class="text-2xl font-extrabold text-sky-500 mb-2">Burbujas Mágicas</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Toca las burbujas flotantes para hacerlas explotar.</p>
+            </div>
+            <button class="w-full bg-emerald-400 hover:bg-emerald-500 active:translate-y-1 text-white font-extrabold text-xl py-3 rounded-full shadow-[0_5px_0_#059669] transition-all">
+                ¡Jugar!
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Modal Base / Contenedores de Juegos -->
+
+    <!-- MODAL 1: GLOBOS -->
+    <div id="balloonModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-rose-400 relative shadow-2xl">
+            <button onclick="closeGame('balloonModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-rose-500 mb-2">🎈 Isla de Globos</h2>
+            <p class="text-slate-700 font-extrabold text-xl mb-3">Globos atrapatos: <span id="balloonScore" class="text-rose-500 text-2xl">0</span> / 10</p>
+            <div id="balloonCanvas" class="w-full h-80 bg-gradient-to-b from-sky-100 to-white rounded-3xl relative overflow-hidden border-4 border-dashed border-sky-300"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: COLORES -->
+    <div id="colorModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-sky-400 relative shadow-2xl">
+            <button onclick="closeGame('colorModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-sky-500 mb-2">🎨 Valle de Colores</h2>
+            <div id="colorDisplay" class="w-40 h-40 rounded-3xl mx-auto my-4 shadow-inner border-8 border-white ring-4 ring-slate-100"></div>
+            <p id="colorPrompt" class="text-slate-700 font-extrabold text-xl mb-4">¿Qué color es este?</p>
+            <div id="colorOptions" class="flex flex-wrap justify-center gap-3"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ANIMALES -->
+    <div id="animalModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-amber-400 relative shadow-2xl">
+            <button onclick="closeGame('animalModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-amber-500 mb-2">🐶 Granja Cantarina</h2>
+            <p class="text-slate-600 font-extrabold text-lg mb-4">¡Toca un animalito para escucharlo!</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div onclick="playAnimal('Perro', '¡Guau guau!', 300)" class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-4 cursor-pointer hover:scale-105 active:scale-95 transition-transform flex flex-col items-center">
+                    <span class="text-6xl">🐶</span>
+                    <span class="font-extrabold text-amber-800 text-lg mt-2">Perro</span>
+                </div>
+                <div onclick="playAnimal('Gato', '¡Miau miau!', 450)" class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-4 cursor-pointer hover:scale-105 active:scale-95 transition-transform flex flex-col items-center">
+                    <span class="text-6xl">🐱</span>
+                    <span class="font-extrabold text-amber-800 text-lg mt-2">Gato</span>
+                </div>
+                <div onclick="playAnimal('Vaca', '¡Muuu!', 150)" class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-4 cursor-pointer hover:scale-105 active:scale-95 transition-transform flex flex-col items-center">
+                    <span class="text-6xl">🐮</span>
+                    <span class="font-extrabold text-amber-800 text-lg mt-2">Vaca</span>
+                </div>
+                <div onclick="playAnimal('Pato', '¡Cuac cuac!', 350)" class="bg-amber-100 border-4 border-amber-300 rounded-3xl p-4 cursor-pointer hover:scale-105 active:scale-95 transition-transform flex flex-col items-center">
+                    <span class="text-6xl">🦆</span>
+                    <span class="font-extrabold text-amber-800 text-lg mt-2">Pato</span>
+                </div>
+            </div>
+            <div id="animalFeedback" class="mt-6 text-2xl font-black text-emerald-600 h-8"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: XILÓFONO MÁGICO -->
+    <div id="xyloModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-indigo-400 relative shadow-2xl">
+            <button onclick="closeGame('xyloModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-indigo-500 mb-2">🎵 Xilófono Mágico</h2>
+            <p class="text-slate-600 font-extrabold text-lg mb-6">¡Toca las teclas para tocar música!</p>
+            <div class="flex justify-center items-end gap-2 h-64 bg-slate-100 p-4 rounded-3xl border-4 border-slate-200">
+                <div onclick="playNote(261.63, 'Do', '#FF5964')" class="xylo-key w-12 sm:w-16 h-full bg-rose-500 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Do</div>
+                <div onclick="playNote(293.66, 'Re', '#FF9F1C')" class="xylo-key w-12 sm:w-16 h-[90%] bg-amber-500 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Re</div>
+                <div onclick="playNote(329.63, 'Mi', '#FFBF00')" class="xylo-key w-12 sm:w-16 h-[80%] bg-yellow-400 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Mi</div>
+                <div onclick="playNote(349.23, 'Fa', '#2EC4B6')" class="xylo-key w-12 sm:w-16 h-[72%] bg-emerald-400 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Fa</div>
+                <div onclick="playNote(392.00, 'Sol', '#35A7FF')" class="xylo-key w-12 sm:w-16 h-[64%] bg-sky-400 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Sol</div>
+                <div onclick="playNote(440.00, 'La', '#7209B7')" class="xylo-key w-12 sm:w-16 h-[56%] bg-purple-500 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">La</div>
+                <div onclick="playNote(493.88, 'Si', '#F72585')" class="xylo-key w-12 sm:w-16 h-[48%] bg-pink-500 rounded-2xl flex items-end justify-center pb-4 text-white font-black text-lg cursor-pointer">Si</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: CUENTASTRELLAS -->
+    <div id="countModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-yellow-400 relative shadow-2xl">
+            <button onclick="closeGame('countModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-amber-500 mb-2">⭐ Cuentastrellas</h2>
+            <p class="text-slate-700 font-extrabold text-xl mb-2">¿Cuántas estrellas ves?</p>
+            <div id="starDisplay" class="flex flex-wrap justify-center items-center gap-4 h-40 bg-indigo-950 rounded-3xl p-4 my-3 border-4 border-indigo-900 shadow-inner"></div>
+            <div id="countOptions" class="flex justify-center gap-3"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: BURBUJAS MÁGICAS -->
+    <div id="bubbleModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-teal-400 relative shadow-2xl">
+            <button onclick="closeGame('bubbleModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-teal-500 mb-2">🫧 Burbujas Mágicas</h2>
+            <p class="text-slate-700 font-extrabold text-xl mb-3">Burbujas explotadas: <span id="bubbleScore" class="text-teal-500 text-2xl">0</span> / 10</p>
+            <div id="bubbleCanvas" class="w-full h-80 bg-gradient-to-b from-teal-50 to-cyan-100 rounded-3xl relative overflow-hidden border-4 border-dashed border-teal-300"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ÁLBUM DE STICKERS -->
+    <div id="albumModal" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden justify-center items-center z-50 p-4">
+        <div class="modal-body bg-white w-full max-w-xl rounded-[40px] p-6 text-center border-8 border-purple-400 relative shadow-2xl">
+            <button onclick="closeGame('albumModal')" class="absolute -top-5 -right-5 bg-rose-500 text-white font-black w-12 h-12 rounded-full border-4 border-white text-2xl shadow-lg flex items-center justify-center hover:scale-110">✕</button>
+            <h2 class="text-3xl font-black text-purple-600 mb-2">🎨 Álbum de Pegatinas</h2>
+            <p class="text-slate-600 font-bold mb-4">¡Gana juegos para desbloquear nuevos amigos mágicos!</p>
+            <div id="stickerGrid" class="grid grid-cols-3 gap-4 bg-purple-50 p-4 rounded-3xl border-2 border-purple-200"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- SINTETIZADOR DE VOZ Y AUDIO (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSoundEffect(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.08);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.95;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- SISTEMA DE RECOMPENSAS Y STICKERS ---
+        let totalStars = parseInt(localStorage.getItem('bosque_stars') || '0');
+        const stickerList = [
+            { icon: '🦄', name: 'Unicornio', cost: 1 },
+            { icon: 'dragon', iconTxt: '🐉', name: 'Dragón', cost: 3 },
+            { icon: 'fairy', iconTxt: '🧚', name: 'Hada', cost: 5 },
+            { icon: 'bear', iconTxt: '🧸', name: 'Osito', cost: 8 },
+            { icon: 'rabbit', iconTxt: '🐰', name: 'Conejo', cost: 10 },
+            { icon: 'crown', iconTxt: '👑', name: 'Corona', cost: 15 }
+        ];
+
+        function updateStarCount() {
+            document.getElementById('starCountDisplay').innerText = totalStars;
+            localStorage.setItem('bosque_stars', totalStars);
+        }
+
+        function addStar() {
+            totalStars += 1;
+            updateStarCount();
+            triggerConfetti();
+            playSoundEffect('win');
+            speak("¡Excelente! Ganaste una estrella mágica");
+        }
+
+        function triggerConfetti() {
+            const colors = ['#FF5964', '#FFD166', '#06D6A0', '#118AB2', '#073B4C', '#9B5DE5'];
+            for (let i = 0; i < 30; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti-piece';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDelay = (Math.random() * 0.5) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 2600);
+            }
+        }
+
+        // --- CONTROL DE MODALES ---
+        function openGame(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+            playSoundEffect('pop');
+        }
+
+        function closeGame(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+            if (id === 'balloonModal') clearInterval(balloonInterval);
+            if (id === 'bubbleModal') clearInterval(bubbleInterval);
+        }
+
+        // --- JUEGO 1: GLOBOS ---
+        let balloonInterval, balloonScore = 0;
+        function startBalloonGame() {
+            balloonScore = 0;
+            document.getElementById('balloonScore').innerText = balloonScore;
+            const canvas = document.getElementById('balloonCanvas');
+            canvas.innerHTML = '';
+            clearInterval(balloonInterval);
+            speak("¡Explotemos globos!");
+            balloonInterval = setInterval(() => createBalloon(canvas), 750);
+        }
+
+        function createBalloon(canvas) {
+            if (balloonScore >= 10) return;
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon-item w-16 h-20 shadow-lg';
+            const colors = ['#FF5964', '#35A7FF', '#FFD166', '#06D6A0', '#9B5DE5'];
+            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.left = Math.random() * (canvas.clientWidth - 70) + 'px';
+
+            balloon.onclick = () => {
+                balloonScore++;
+                document.getElementById('balloonScore').innerText = balloonScore;
+                playSoundEffect('pop');
+                balloon.remove();
+                if (balloonScore === 10) {
+                    clearInterval(balloonInterval);
+                    addStar();
+                }
+            };
+            canvas.appendChild(balloon);
+            setTimeout(() => { if (balloon.parentElement) balloon.remove(); }, 4600);
+        }
+
+        // --- JUEGO 2: VALLE DE COLORES ---
+        const colorsList = [
+            { name: 'Rojo', hex: '#FF3B3B' },
+            { name: 'Azul', hex: '#0077FF' },
+            { name: 'Amarillo', hex: '#FFCC00' },
+            { name: 'Verde', hex: '#00CC44' },
+            { name: 'Morado', hex: '#A855F7' }
+        ];
+        let currentColor = {};
+
+        function startColorGame() {
+            nextColor();
+            speak("Adivina qué color es");
+        }
+
+        function nextColor() {
+            currentColor = colorsList[Math.floor(Math.random() * colorsList.length)];
+            document.getElementById('colorDisplay').style.backgroundColor = currentColor.hex;
+            const container = document.getElementById('colorOptions');
+            container.innerHTML = '';
+
+            colorsList.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'px-6 py-3 rounded-2xl font-extrabold text-white text-lg shadow-md transition-transform hover:scale-105 active:scale-95';
+                btn.style.backgroundColor = c.hex;
+                btn.innerText = c.name;
+                btn.onclick = () => {
+                    if (c.name === currentColor.name) {
+                        speak("¡Sí! Es el color " + c.name);
+                        addStar();
+                        setTimeout(nextColor, 1200);
+                    } else {
+                        playSoundEffect('wrong');
+                        speak("Inténtalo otra vez");
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // --- JUEGO 3: ANIMALES ---
+        function playAnimal(name, sound, pitchFreq) {
+            document.getElementById('animalFeedback').innerText = `El ${name} hace ${sound}`;
+            speak(`El ${name} hace ${sound}`);
+            playSoundEffect('win');
+        }
+
+        // --- JUEGO 4: XILÓFONO MÁGICO ---
+        function playNote(freq, noteName, color) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.8);
+            speak(noteName);
+        }
+
+        // --- JUEGO 5: CUENTASTRELLAS ---
+        let currentCount = 0;
+        function startCountGame() {
+            nextCountRound();
+        }
+
+        function nextCountRound() {
+            currentCount = Math.floor(Math.random() * 5) + 1;
+            const display = document.getElementById('starDisplay');
+            display.innerHTML = '';
+            for (let i = 0; i < currentCount; i++) {
+                const star = document.createElement('span');
+                star.className = 'text-5xl animate-bounce';
+                star.innerText = '⭐';
+                display.appendChild(star);
+            }
+
+            const optionsContainer = document.getElementById('countOptions');
+            optionsContainer.innerHTML = '';
+            for (let num = 1; num <= 5; num++) {
+                const btn = document.createElement('button');
+                btn.className = 'w-14 h-14 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-2xl rounded-2xl shadow-[0_4px_0_#D97706] active:translate-y-1';
+                btn.innerText = num;
+                btn.onclick = () => {
+                    if (num === currentCount) {
+                        speak("¡Muy bien! Hay " + num + " estrellas");
+                        addStar();
+                        setTimeout(nextCountRound, 1200);
+                    } else {
+                        playSoundEffect('wrong');
+                        speak("Cuenta bien otra vez");
+                    }
+                };
+                optionsContainer.appendChild(btn);
+            }
+            speak("¿Cuántas estrellas ves?");
+        }
+
+        // --- JUEGO 6: BURBUJAS MÁGICAS ---
+        let bubbleInterval, bubbleScore = 0;
+        function startBubbleGame() {
+            bubbleScore = 0;
+            document.getElementById('bubbleScore').innerText = bubbleScore;
+            const canvas = document.getElementById('bubbleCanvas');
+            canvas.innerHTML = '';
+            clearInterval(bubbleInterval);
+            speak("¡A reventar burbujas!");
+            bubbleInterval = setInterval(() => createBubble(canvas), 800);
+        }
+
+        function createBubble(canvas) {
+            if (bubbleScore >= 10) return;
+            const bubble = document.createElement('div');
+            const size = Math.floor(Math.random() * 30) + 50;
+            bubble.className = 'bubble-item flex items-center justify-center';
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * (canvas.clientWidth - 70) + 'px';
+
+            bubble.onclick = () => {
+                bubbleScore++;
+                document.getElementById('bubbleScore').innerText = bubbleScore;
+                playSoundEffect('pop');
+                bubble.remove();
+                if (bubbleScore === 10) {
+                    clearInterval(bubbleInterval);
+                    addStar();
+                }
+            };
+            canvas.appendChild(bubble);
+            setTimeout(() => { if (bubble.parentElement) bubble.remove(); }, 5200);
+        }
+
+        // --- ÁLBUM DE STICKERS ---
+        function openStickerAlbum() {
+            const grid = document.getElementById('stickerGrid');
+            grid.innerHTML = '';
+            stickerList.forEach(s => {
+                const isUnlocked = totalStars >= s.cost;
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-2xl flex flex-col items-center justify-center border-4 ${isUnlocked ? 'bg-white border-purple-300 shadow-md' : 'bg-slate-100 border-slate-300 opacity-60'}`;
+                card.innerHTML = `
+                    <span class="text-5xl mb-1">${isUnlocked ? (s.iconTxt || s.icon) : '🔒'}</span>
+                    <span class="font-bold text-slate-700 text-sm">${s.name}</span>
+                    <span class="text-xs font-semibold text-purple-600 mt-1">${isUnlocked ? 'Desbloqueado' : s.cost + ' ⭐'}</span>
+                `;
+                grid.appendChild(card);
+            });
+            openGame('albumModal');
+        }
+
+        // Inicialización
+        updateStarCount();
+    </script>
+</body>
+</html>
